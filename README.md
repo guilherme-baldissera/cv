@@ -38,3 +38,44 @@
 
 ## Endpoints
 Once your app is up, you can check the APIS documentation here : http://localhost:8080/swagger-ui.html
+
+### Payload to add CV example.
+```{
+  "userInfo": {
+    "name": "Eduward",
+    "age": 27,
+    "phoneNumber": "98446031",
+    "address": {
+      "streetName": "street name",
+      "postCode": "ASN452",
+      "city": "London",
+      "country": "UK"
+    }
+  },
+  "educations": [
+    {
+      "institutionName": "Oxford",
+      "courseName": "Computer Science",
+      "degreeLevel": "Bachelor Degree"
+    },
+		{
+        "institutionName": "UFSCar",
+        "courseName": "Software ENG",
+        "degreeLevel": "Bachelor Degree"
+    }
+  ],
+  "skills": [
+    {
+      "skillName": "python",
+      "level": "HIGH"
+    }
+  ],
+  "workExperiences": [
+    {
+      "companyName": "Daitan",
+      "jobDescription": "Good Work",
+      "startDay": "2018-06-01",
+      "endDay": "2020-08-01"
+    }
+  ]
+}

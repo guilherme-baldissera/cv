@@ -1,30 +1,31 @@
-package com.bjs.cv.controllers;
+package com.bjs.cv.services;
 
+import com.bjs.cv.daos.CVRepository;
 import com.bjs.cv.entities.*;
 import com.bjs.cv.enums.Level;
-import com.bjs.cv.services.CVService;
+import com.bjs.cv.exceptions.IDNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.util.Assert;
 
-import static org.mockito.Mockito.*;
-
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CvControllerTests {
+import static org.mockito.Mockito.*;
 
-    private CvController cvController;
+public class CVServiceTests {
+
     private CVService cvService;
+    private CVRepository cvRepository;
 
     @BeforeEach
     public void initEachTest(){
-        cvService = Mockito.mock(CVService.class);
-        cvController = new CvController(cvService);
+        this.cvRepository = Mockito.mock(CVRepository.class);
+        this.cvService = new CVServiceImp(cvRepository);
     }
 
     public CV createCV(){
@@ -43,23 +44,21 @@ public class CvControllerTests {
     }
 
     @Test
-    public void testGetAllCvsSuccessfully(){
-        List<CV> Cvs = new ArrayList<>();
-        Cvs.add(this.createCV());
+    public void testGetByIdSuccessfully(){
 
-        when(cvService.getAllCVs()).thenReturn(Cvs);
-        Assert.isInstanceOf(ArrayList.class, cvController.getAllCVs(),"Should return a list of CVs");
-        verify(cvService, times(1)).getAllCVs();
+        CV cv = this.createCV();
+
+        when(cvRepository.findById(cv.getId())).thenReturn(java.util.Optional.of(cv));
+        Assert.isInstanceOf(CV.class, cvService.getCVById(cv.getId()),"Should return a instance of CV");
+        verify(cvRepository, times(1)).findById(cv.getId());
     }
 
     @Test
-    public void testGetCVByIdSuccessfully(){
-        CV cv = this.createCV();
-
-        when(cvService.getCVById(cv.getId())).thenReturn(cv);
-        Assert.isInstanceOf(CV.class, cvController.getCVById(cv.getId()),"Should return a instance of CV");
-        Assertions.assertEquals(cv, cvController.getCVById(cv.getId()), "Should return the CV created");
-        verify(cvService, times(2)).getCVById(cv.getId());
+    public void testGetByIdFailedInvalidID() {
+        CV cv = null;
+        when(cvRepository.findById(2)).thenReturn(java.util.Optional.ofNullable(cv));
+        Assertions.assertThrows(IDNotFoundException.class,()->cvService.getCVById(2));
+        verify(cvRepository, times(1)).findById(2);
     }
 
 }
